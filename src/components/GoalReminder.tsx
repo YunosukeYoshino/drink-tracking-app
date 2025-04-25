@@ -17,6 +17,7 @@ function GoalReminder() {
           .single();
         if (error) {
           console.error('Error fetching user settings:', error);
+          alert('ユーザー設定の取得に失敗しました。もう一度お試しください。');
           return;
         }
         if (data) {
@@ -30,6 +31,15 @@ function GoalReminder() {
       }
     };
     fetchUserSettings();
+
+    // Check localStorage for reminder settings on app load
+    const reminderActive = localStorage.getItem('reminderActive');
+    const reminderIntervalStored = localStorage.getItem('reminderInterval');
+    if (reminderActive === 'true' && reminderIntervalStored) {
+      setReminderInterval(Number(reminderIntervalStored));
+      setIsReminderActive(true);
+      scheduleReminder();
+    }
   }, []);
 
   const saveSettings = async () => {
@@ -45,6 +55,7 @@ function GoalReminder() {
         });
       if (error) {
         console.error('Error saving user settings:', error);
+        alert('設定の保存に失敗しました。もう一度お試しください。');
       } else {
         alert('設定が保存されました');
         if (isReminderActive) {
@@ -61,19 +72,29 @@ function GoalReminder() {
   };
 
   const scheduleReminder = () => {
-    if ('Notification' in window && Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          const intervalMs = reminderInterval * 60 * 1000;
-          const intervalId = setInterval(() => {
-            new Notification('ドリンクトラッカーリマインダー', {
-              body: '水分を摂取する時間です！',
-            });
-          }, intervalMs);
-          localStorage.setItem('reminderIntervalId', intervalId.toString());
-        }
-      });
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        setReminder();
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            setReminder();
+          }
+        });
+      }
     }
+  };
+
+  const setReminder = () => {
+    const intervalMs = reminderInterval * 60 * 1000;
+    const intervalId = setInterval(() => {
+      new Notification('ドリンクトラッカーリマインダー', {
+        body: '水分を摂取する時間です！',
+      });
+    }, intervalMs);
+    localStorage.setItem('reminderIntervalId', intervalId.toString());
+    localStorage.setItem('reminderActive', 'true');
+    localStorage.setItem('reminderInterval', reminderInterval.toString());
   };
 
   const clearReminder = () => {
@@ -81,6 +102,7 @@ function GoalReminder() {
     if (intervalId) {
       clearInterval(parseInt(intervalId, 10));
       localStorage.removeItem('reminderIntervalId');
+      localStorage.setItem('reminderActive', 'false');
     }
   };
 
