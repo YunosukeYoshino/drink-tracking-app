@@ -1,4 +1,9 @@
 import { test, expect } from 'vitest';
+import * as matchers from '@testing-library/jest-dom/matchers';
+expect.extend(matchers);  // Locally extend expect to ensure it's defined
+import { vi } from 'vitest';  // Added for mocking environment variables
+vi.stubEnv('VITE_SUPABASE_URL', 'http://dummy-supabase-url.com');  // Mock Supabase URL for testing
+vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'dummy-key');  // Mock Supabase anon key for testing
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App from '../App';
