@@ -3,6 +3,7 @@ import { GlassWater } from 'lucide-react';
 import DrinkForm from './components/DrinkForm';
 import DrinkList from './components/DrinkList';
 import Stats from './components/Stats';
+import GoalReminder from './components/GoalReminder';
 import { supabase } from './lib/supabase';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
       </header>
       <div className="w-full max-w-md space-y-6">
         <DrinkForm onDrinkAdded={handleDrinkAdded} />
+        <GoalReminder />
         <Stats />
         <DrinkList />
       </div>
