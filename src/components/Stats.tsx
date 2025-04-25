@@ -89,8 +89,19 @@ const Stats: React.FC = () => {
     <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
       <h2 className="text-2xl font-bold mb-4">統計ダッシュボード</h2>
       <p className="text-lg mb-2">総ドリンク摂取量: <span className="font-semibold">{totalAmount} ml</span> / 目標: <span className="font-semibold">{goal} ml</span></p>
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-        <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
+      <div className="w-full bg-gray-200 rounded-full h-8 relative mb-6">
+        <div
+          className="bg-blue-600 h-8 rounded-full flex items-center justify-center text-white font-semibold"
+          style={{ width: `${progress}%` }}
+          aria-label={`Goal progress: ${progress}%`}
+        >
+          {progress}%
+        </div>
+        {parseFloat(progress) >= 80 && (
+          <span className="absolute top-0 right-0 bg-green-500 text-white rounded-full px-2 py-1 text-xs mt-(-2) mr-(-2)">
+            Great Job!
+          </span>
+        )}
       </div>
       <p className="text-sm text-gray-600 mb-6">達成率: {progress}%</p>
       
