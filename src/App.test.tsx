@@ -1,9 +1,1 @@
-import { render } from '@testing-library/react';
-import React from 'react';
-import App from './App';
-import { test, expect } from 'vitest';
-
-test('App renders with BrowserRouter', () => {
-  const { container } = render(<App />);
-  expect(container).toBeTruthy();  // Basic check to ensure App mounts
-});
+import { render, screen } from "@testing-library/react";\nimport { BrowserRouter } from "react-router-dom";\nimport App from "./App";\nimport { test, expect } from "vitest";\n\ntest("App renders with BrowserRouter and navigates to a default route", async () => {\n  render(\n    <BrowserRouter>\n      <App />\n    </BrowserRouter>\n  );\n\n  const headerElement = screen.getByText(/\\u30c9\\u30ea\\u30f3\\u30af\\u30c8\\u30e9\\u30c3\\u30ab\\u30fc/i);\n  expect(headerElement).toBeInTheDocument();\n});
