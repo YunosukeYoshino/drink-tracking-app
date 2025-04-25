@@ -8,12 +8,34 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const Stats: React.FC = () => {
   const [totalAmount, setTotalAmount] = useState(0);
+  const [goal, setGoal] = useState(2000); // Default goal of 2000ml
   const [loading, setLoading] = useState(true);
   const [typeData, setTypeData] = useState<{ labels: string[], data: number[] }>({ labels: [], data: [] });
   const [timeData, setTimeData] = useState<{ labels: string[], data: number[] }>({ labels: [], data: [] });
 
   useEffect(() => {
     fetchStats();
+  }, []);
+  
+  useEffect(() => {
+    const fetchUserGoal = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data, error } = await supabase
+          .from('user_settings')
+          .select('goal')
+          .eq('user_id', session.user.id)
+          .single();
+        if (error) {
+          console.error('Error fetching user goal:', error);
+          return;
+        }
+        if (data) {
+          setGoal(data.goal || 2000);
+        }
+      }
+    };
+    fetchUserGoal();
   }, []);
 
   const fetchStats = async () => {
@@ -61,10 +83,16 @@ const Stats: React.FC = () => {
 
   if (loading) return <div className="text-center py-10">統計を読み込み中...</div>;
 
+  const progress = Math.min((totalAmount / goal) * 100, 100).toFixed(1);
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
       <h2 className="text-2xl font-bold mb-4">統計ダッシュボード</h2>
-      <p className="text-lg mb-6">総ドリンク摂取量: <span className="font-semibold">{totalAmount} ml</span></p>
+      <p className="text-lg mb-2">総ドリンク摂取量: <span className="font-semibold">{totalAmount} ml</span> / 目標: <span className="font-semibold">{goal} ml</span></p>
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+        <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
+      </div>
+      <p className="text-sm text-gray-600 mb-6">達成率: {progress}%</p>
       
       <h3 className="text-xl font-semibold mb-2">種類別摂取量</h3>
       <div className="mb-6" style={{ height: '300px' }}>
