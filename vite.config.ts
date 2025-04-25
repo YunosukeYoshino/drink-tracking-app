@@ -9,7 +9,8 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 54601,
+    port: 53685,
     cors: true,
+allowedHosts: true,
   },
 })
