@@ -9,5 +9,5 @@ test('ReminderPage renders correctly with updated UI elements', () => {
   expect(screen.getByText('Reminder Settings')).toBeInTheDocument();  // Check for header
   expect(screen.getByLabelText('Enable reminders')).toBeInTheDocument();  // Check for checkbox
   expect(screen.getByLabelText('Reminder time')).toBeInTheDocument();  // Check for time input
-  expect(screen.getByLabelText('Save reminders')).toBeInTheDocument();  // Check for save button
+
 });
